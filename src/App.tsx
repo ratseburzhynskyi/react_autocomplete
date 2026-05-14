@@ -5,7 +5,12 @@ import { peopleFromServer } from './data/people';
 
 type Person = (typeof peopleFromServer)[number];
 
-export const App: React.FC = () => {
+type Props = {
+  onSelected?: (person: Person) => void;
+  delay?: number;
+};
+
+export const App: React.FC<Props> = ({ onSelected, delay = 300 }) => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +29,7 @@ export const App: React.FC = () => {
   const applyDebounce = useMemo(() => {
     return debounce((value: string) => {
       setDebouncedQuery(value);
-    }, 300);
+    }, delay);
   }, []);
 
   return (
@@ -67,6 +72,8 @@ export const App: React.FC = () => {
                     setQuery(person.name);
                     setDebouncedQuery(person.name);
                     setIsOpen(false);
+
+                    onSelected?.(person);
                   }}
                 >
                   <p>{person.name}</p>
